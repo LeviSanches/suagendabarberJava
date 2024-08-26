@@ -26,9 +26,19 @@ public class AgendamentoController {
 		return agendamentoService.buscarTodos();
 	}
 
-	@GetMapping("/{data}")
-	public List<AgendamentoDTO> buscarPorDataEProfissional(@PathVariable LocalDate data, @RequestBody ProfissionalDTO profissional) {
-		return agendamentoService.buscarTodosPorDataEProfissional(data, profissional);
+	@GetMapping("/data")
+	public List<AgendamentoDTO> buscarPorData(@RequestBody AgendamentoDTO data) {
+		return agendamentoService.buscarTodosPorData(data);
+	}
+
+	@GetMapping("/profissional")
+	public List<AgendamentoDTO> buscarPorProfissional(@RequestBody AgendamentoDTO profissional) {
+		return agendamentoService.buscarPorProfissional(profissional);
+	}
+
+	@GetMapping("/profissional-data")
+	public List<AgendamentoDTO> buscaPorProfissionalEData(@RequestBody AgendamentoDTO agendaPessoal) {
+		return agendamentoService.buscarPorProfissionalEData(agendaPessoal);
 	}
 
 	@PostMapping

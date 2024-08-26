@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.siseven.adm.suagendabarber.dto.ProfissionalDTO;
+import com.siseven.adm.suagendabarber.dto.ServicoDTO;
 import com.siseven.adm.suagendabarber.entities.ClienteEntity;
 import com.siseven.adm.suagendabarber.entities.ServicoEntity;
 import com.siseven.adm.suagendabarber.repositories.ClienteRepository;
@@ -40,14 +41,22 @@ public class AgendamentoService {
 		return agendamentos.stream().map(AgendamentoDTO::new).toList();
 	}
 
-	public List<AgendamentoDTO> buscarTodosPorData(LocalDate data) {
-		List<AgendamentoEntity> agendamentos = repository.findByData(data);
+	public List<AgendamentoDTO> buscarTodosPorData(AgendamentoDTO data) {
+		List<AgendamentoEntity> agendamentos = repository.findByData(data.getData());
 		return agendamentos.stream().map(AgendamentoDTO::new).toList();
 	}
 	
-	public List<AgendamentoDTO> buscarTodosPorDataEProfissional(LocalDate data, ProfissionalDTO profissional) {
-		ProfissionalEntity profissionalEntity = new ProfissionalEntity(profissional);
-		List<AgendamentoEntity> agendamentos = repository.findByDataAndProfissional(data, profissionalEntity);
+	public List<AgendamentoDTO> buscarPorProfissional(AgendamentoDTO profissional) {
+		ProfissionalEntity profissionalEntity = profissionalRepository.findById(profissional.getProfissional().getId())
+				.orElseThrow(() -> new EntityNotFoundException("Profissional não encontrado"));
+		List<AgendamentoEntity> agendamentos = repository.findByProfissional(profissionalEntity);
+		return agendamentos.stream().map(AgendamentoDTO::new).toList();
+	}
+
+	public List<AgendamentoDTO> buscarPorProfissionalEData(AgendamentoDTO agendaPessoal) {
+		ProfissionalEntity profissionalEntity = profissionalRepository.findById(agendaPessoal.getProfissional().getId())
+				.orElseThrow(() -> new EntityNotFoundException("Profissional não encontrado"));
+		List<AgendamentoEntity> agendamentos = repository.findByProfissionalAndData(profissionalEntity, agendaPessoal.getData());
 		return agendamentos.stream().map(AgendamentoDTO::new).toList();
 	}
 
@@ -87,14 +96,19 @@ public class AgendamentoService {
 
 
 	public void excluirAgendamento(Long id) {
-		boolean existe = repository.findById(id).isPresent();
-		if (existe) {
-			AgendamentoEntity agendamento = repository.findById(id).get();
-			repository.delete(agendamento);
+		if (id != null) {
+			Optional<AgendamentoEntity> agendamentoExistente = repository.findById(id);
+			if (agendamentoExistente.isPresent()) {
+				AgendamentoEntity agendamento = agendamentoExistente.get();
+				repository.delete(agendamento);
+			}
+			else {
+				throw new EntityNotFoundException("Serviço não encontrado com o ID: " + id);
+			}
 		}
-		throw new EntityNotFoundException("Erro ao excluir agendamento com o id: " + id);
+		else {
+			throw new InvalidArgumentException("Argumento inválido ou vazio");
+		}
 	}
-	
-	
 
 }

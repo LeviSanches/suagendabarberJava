@@ -1,0 +1,10 @@
+insert into tb_cliente (caminho_imagem_perfil, data_nascimento, email, genero, nome, senha, telefone) values ('blablabla', '1997-05-10', 'levi@mail.com', 'masculino', 'Levi', '123123', '75982023426');
+insert into tb_cliente (caminho_imagem_perfil, data_nascimento, email, genero, nome, senha, telefone) values ('asudhasda', '1998-04-03', 'lais@mail.com', 'feminino', 'Lais', '321321', '71993585057');
+insert into tb_cliente (caminho_imagem_perfil, data_nascimento, email, genero, nome, senha, telefone) values ('auauauaua', '2016-04-20', 'pretinha@mail.com', 'femea', 'Pretinha', '123321', '71993585057');
+insert into tb_profissional (nome, senha) values ('João Barber', '123123');
+insert into tb_profissional (nome, senha) values ('Lucas Barber', '123123');
+insert into tb_profissional (nome, senha) values ('Maria', '123123');
+insert into tb_servico (nome, qt_slots, valor) values ('Corte Clássico', '2', '30.00');
+insert into tb_servico (nome, qt_slots, valor) values ('Barba', '1', '15.00');
+insert into tb_servico (nome, qt_slots, valor) values ('Corte Degradê', '3', '36.00');
+insert into tb_servico (nome, qt_slots, valor) values ('Sobrancelha', '1', '12.00');

@@ -11,6 +11,7 @@ import com.siseven.adm.suagendabarber.entities.ProfissionalEntity;
 public interface AgendamentoRepository extends JpaRepository<AgendamentoEntity, Long>{
 	
 	List<AgendamentoEntity> findByData(LocalDate data);
-	List<AgendamentoEntity> findByDataAndProfissional(LocalDate data, ProfissionalEntity profissional);
+	List<AgendamentoEntity> findByProfissional(ProfissionalEntity profissional);
+	List<AgendamentoEntity> findByProfissionalAndData(ProfissionalEntity profissional, LocalDate data);
 
 }
