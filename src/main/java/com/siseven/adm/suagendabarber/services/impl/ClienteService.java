@@ -5,6 +5,7 @@ import com.siseven.adm.suagendabarber.entities.AgendamentoEntity;
 import com.siseven.adm.suagendabarber.entities.ClienteEntity;
 import com.siseven.adm.suagendabarber.repositories.ClienteRepository;
 import com.siseven.adm.suagendabarber.services.exceptions.EntityNotFoundException;
+import com.siseven.adm.suagendabarber.services.exceptions.InvalidArgumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,25 +35,19 @@ public class ClienteService {
     }
 
     public void incluirCliente(ClienteDTO cliente) {
-        if (cliente == null) {
-            throw new IllegalArgumentException("Erro ao incluir cliente.");
+        if (cliente != null && cliente.getId() == null) {
+            repository.save(new ClienteEntity(cliente));
+            return;
         }
-        ClienteEntity clienteEntity = new ClienteEntity(cliente);
-        repository.save(clienteEntity);
-    }
-
-    public void atualizarCliente(ClienteDTO cliente) {
-        if (cliente == null) {
-            throw new IllegalArgumentException("Erro ao atualizar cliente.");
+        if (cliente != null && cliente.getId() != null) {
+            boolean existe = repository.findById(cliente.getId()).isPresent();
+            if (existe) {
+                repository.save(new ClienteEntity(cliente));
+                return;
+            }
+            throw new InvalidArgumentException("Erro ao atualizar cliente");
         }
-        boolean existe = repository.findById(cliente.getId()).isPresent();
-        if (existe) {
-            ClienteEntity clienteEntity = new ClienteEntity(cliente);
-            repository.save(clienteEntity);
-        }
-        else {
-            throw new EntityNotFoundException("Erro ao atualizar cliente, o mesmo não existe.");
-        }
+        throw new InvalidArgumentException("Erro ao incluir cliente.");
     }
 
     public void excluirCliente(Long id) {
@@ -60,6 +55,7 @@ public class ClienteService {
         if (existe) {
             ClienteEntity cliente = repository.findById(id).get();
             repository.delete(cliente);
+            return;
         }
         throw new EntityNotFoundException("Erro ao excluir agendamento com o id: " + id);
     }

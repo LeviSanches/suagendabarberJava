@@ -63,8 +63,19 @@ public class AgendamentoService {
 	public void atualizarAgendamento(AgendamentoDTO agendamento) {
 		if (agendamento != null && agendamento.getId() != null) {
 			Optional<AgendamentoEntity> agendamentoExistente = repository.findById(agendamento.getId());
+
+			ClienteEntity cliente = clienteRepository.findById(agendamento.getCliente().getId())
+					.orElseThrow(() -> new EntityNotFoundException("Cliente não encontrado"));
+			ServicoEntity servico = servicoRepository.findById(agendamento.getServico().getId())
+					.orElseThrow(() -> new EntityNotFoundException("Serviço não encontrado"));
+			ProfissionalEntity profissional = profissionalRepository.findById(agendamento.getProfissional().getId())
+					.orElseThrow(() -> new EntityNotFoundException("Profissional não encontrado"));
+
 			if (agendamentoExistente.isPresent()) {
 				AgendamentoEntity agendamentoEntity = agendamentoExistente.get();
+				agendamentoEntity.setCliente(cliente);
+				agendamentoEntity.setServico(servico);
+				agendamentoEntity.setProfissional(profissional);
 				repository.save(agendamentoEntity);
 			} else {
 				throw new InvalidArgumentException("Agendamento não encontrado com o ID: " + agendamento.getId());
@@ -75,9 +86,6 @@ public class AgendamentoService {
 	}
 
 	public void incluirAgendamento(AgendamentoDTO agendamento) {
-		if (agendamento == null) {
-			throw new InvalidArgumentException("Argumento inválido, tente novamente");
-		}
 		AgendamentoEntity agendamentoEntity = new AgendamentoEntity(agendamento);
 
 		ClienteEntity cliente = clienteRepository.findById(agendamento.getCliente().getId())
@@ -90,25 +98,32 @@ public class AgendamentoService {
 		agendamentoEntity.setCliente(cliente);
 		agendamentoEntity.setServico(servico);
 		agendamentoEntity.setProfissional(profissional);
-
-		repository.save(agendamentoEntity);
+		if (agendamento.getId() == null) {
+			repository.save(agendamentoEntity);
+			return;
+		}
+		if (agendamento.getId() != null) {
+			boolean existe = repository.findById(agendamento.getId()).isPresent();
+			if (existe) {
+				repository.save(new AgendamentoEntity(agendamento));
+				return;
+			}
+			throw new EntityNotFoundException("Erro ao atualizar agendamento");
+		}
+		throw new InvalidArgumentException("Argumento inválido, tente novamente");
 	}
 
 
 	public void excluirAgendamento(Long id) {
 		if (id != null) {
-			Optional<AgendamentoEntity> agendamentoExistente = repository.findById(id);
-			if (agendamentoExistente.isPresent()) {
-				AgendamentoEntity agendamento = agendamentoExistente.get();
-				repository.delete(agendamento);
+			boolean existe = repository.findById(id).isPresent();
+			if (existe) {
+				repository.deleteById(id);
+				return;
 			}
-			else {
-				throw new EntityNotFoundException("Serviço não encontrado com o ID: " + id);
-			}
+			throw new InvalidArgumentException("Erro ao exluir agendamento");
 		}
-		else {
-			throw new InvalidArgumentException("Argumento inválido ou vazio");
-		}
+		throw new InvalidArgumentException("Erro ao buscar agendamento com o id: " + id);
 	}
 
 }

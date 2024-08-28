@@ -28,30 +28,19 @@ public class ServicoService {
 	}
 
 	public void incluirServico(ServicoDTO servico) {
-		if (servico.getNome() == null || servico.getNome().isBlank()) {
-			throw new InvalidArgumentException("Nome inválido ou vazio");
+		if (servico != null && servico.getId() == null) {
+			repository.save(new ServicoEntity(servico));
+			return;
 		}
-		if (servico.getValor() == null || servico.getValor().toString().isBlank()) {
-			throw new InvalidArgumentException("Valor inválido ou vazio");
-		}
-		if (servico.getQtSlots() == null || servico.getQtSlots().toString().isBlank()) {
-			throw new InvalidArgumentException("Slot inválido ou vazio");
-		}
-		repository.save(new ServicoEntity(servico));
-	}
-
-	public void atualizarServico(ServicoDTO servico) {
 		if (servico != null && servico.getId() != null) {
-			Optional<ServicoEntity> servicoExistente = repository.findById(servico.getId());
-			if (servicoExistente.isPresent()) {
-				ServicoEntity servicoEntity = servicoExistente.get();
-				repository.save(servicoEntity);
-			} else {
-				throw new InvalidArgumentException("Serviço não encontrado com o ID: " + servico.getId());
+			boolean existe = repository.findById(servico.getId()).isPresent();
+			if (existe) {
+				repository.save(new ServicoEntity(servico));
+				return;
 			}
-		} else {
-			throw new InvalidArgumentException("Argumento inválido ou vazio");
+			throw new InvalidArgumentException("Erro ao atualizar serviço");
 		}
+		throw new InvalidArgumentException("Erro ao incluir serviço");
 	}
 
 	public void deletarServico(Long id) {

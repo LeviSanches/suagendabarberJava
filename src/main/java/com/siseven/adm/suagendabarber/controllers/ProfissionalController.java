@@ -20,19 +20,24 @@ public class ProfissionalController {
 
     @GetMapping
     public ResponseEntity<StandardResponseSuccess> obterProfissionais() {
-        return ResponseUtil.respostaPadraoSucesso("Sucesso", HttpStatus.OK, profissionalService.listarProfissionais());
+        return ResponseUtil.respostaPadraoSucesso("Dados obtidos com exito", HttpStatus.OK, profissionalService.listarProfissionais());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProfissionalDTO> buscarProfissional(@PathVariable Long id) {
-        ProfissionalDTO profissional = profissionalService.buscarProfissional(id);
-        return ResponseEntity.ok(profissional);
+    public ResponseEntity<StandardResponseSuccess> buscarProfissional(@PathVariable Long id) {
+        return ResponseUtil.respostaPadraoSucesso("Dado obtido com exito", HttpStatus.OK, profissionalService.buscarProfissional(id));
     }
 
     @PostMapping
     public ResponseEntity<StandardResponseSuccess> incluirProfissional(@RequestBody ProfissionalDTO profissional) {
         profissionalService.incluirProfissional(profissional);
-        return ResponseUtil.respostaPadraoSucesso("Sucesso", HttpStatus.CREATED);
+        return ResponseUtil.respostaPadraoSucesso("Incluido com sucesso", HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<StandardResponseSuccess> atualizarProfissional(@RequestBody ProfissionalDTO profissional) {
+        profissionalService.incluirProfissional(profissional);
+        return ResponseUtil.respostaPadraoSucesso("Atualizado com sucesso", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

@@ -28,6 +28,12 @@ public class ServicoController {
 		return ResponseUtil.respostaPadraoSucesso("Criado com sucesso!", HttpStatus.CREATED);
 	}
 
+	@PutMapping
+	public ResponseEntity<StandardResponseSuccess> atualizarServico(@RequestBody ServicoDTO servico) {
+		servicoService.incluirServico(servico);
+		return ResponseUtil.respostaPadraoSucesso("Atualizado com sucesso!", HttpStatus.OK);
+	}
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<StandardResponseSuccess> excluirServico(@PathVariable Long id) {
 		servicoService.deletarServico(id);

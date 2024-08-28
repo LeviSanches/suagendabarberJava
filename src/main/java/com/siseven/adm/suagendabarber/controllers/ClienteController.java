@@ -18,20 +18,24 @@ public class ClienteController {
 
     @GetMapping
     public ResponseEntity<StandardResponseSuccess> listarTodos() {
-        return ResponseUtil
-                .respostaPadraoSucesso("Resultado obtido com sucesso", HttpStatus.OK, service.listarClientes());
+        return ResponseUtil.respostaPadraoSucesso("Resultado obtido com sucesso", HttpStatus.OK, service.listarClientes());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<StandardResponseSuccess> buscarCliente(@PathVariable Long id) {
-        return ResponseUtil
-                .respostaPadraoSucesso("Resultado obtido com sucesso", HttpStatus.OK, service.buscarCliente(id));
+        return ResponseUtil.respostaPadraoSucesso("Resultado obtido com sucesso", HttpStatus.OK, service.buscarCliente(id));
     }
 
     @PostMapping
     public ResponseEntity<StandardResponseSuccess> inserirCliente(@RequestBody  ClienteDTO cliente) {
         service.incluirCliente(cliente);
         return ResponseUtil.respostaPadraoSucesso("Cliente cadastrado com sucesso", HttpStatus.CREATED);
+    }
+
+    @PutMapping
+    public ResponseEntity<StandardResponseSuccess> atualizar(@RequestBody ClienteDTO cliente) {
+        service.incluirCliente(cliente);
+        return ResponseUtil.respostaPadraoSucesso("Cliente atualizado com sucesso", HttpStatus.OK);
     }
 
     @DeleteMapping

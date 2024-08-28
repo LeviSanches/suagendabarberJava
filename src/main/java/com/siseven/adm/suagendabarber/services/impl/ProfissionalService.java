@@ -30,13 +30,19 @@ public class ProfissionalService {
     }
 
     public void incluirProfissional(ProfissionalDTO profissional) {
-        if (profissional.getNome() == null || profissional.getNome().isBlank()) {
-            throw new InvalidArgumentException("Parâmetro nome é necessário, ou se encontra inválido");
+        if (profissional != null && profissional.getId() == null) {
+            repository.save(new ProfissionalEntity(profissional));
+            return;
         }
-        if (profissional.getSenha() == null || profissional.getSenha().isBlank()) {
-            throw new InvalidArgumentException("Parâmetro senha é necessário, ou se encontra inválido");
+        if (profissional != null && profissional.getId() != null) {
+            boolean existe = repository.findById(profissional.getId()).isPresent();
+            if (existe) {
+                repository.save(new ProfissionalEntity(profissional));
+                return;
+            }
+            throw new EntityNotFoundException("Não foi possível encontrar o profissional:" + profissional.getNome());
         }
-        repository.save(new ProfissionalEntity(profissional));
+        throw new InvalidArgumentException("erro ao incluir ou atualizar profissional");
     }
 
     public void excluirProfissional(Long id) {
